@@ -1,2 +1,3 @@
 *.json
 !*eval_all.json
+debug_outputs.py
