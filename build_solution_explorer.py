@@ -4,7 +4,7 @@ from datetime import datetime
 
 import pandas as pd
 
-from lcb_runner.lm_styles import LanguageModelList
+from lcb_runner.lm_styles import LanguageModelList, LMStyle
 
 problems = []
 
@@ -18,6 +18,18 @@ def get_url(jsonrow):
         return f"https://atcoder.jp/contests/{jsonrow['contest_id']}/tasks/{jsonrow['question_id']}"
     if jsonrow["platform"] == "codeforces":
         return f"https://codeforces.com/problemset/problem/{jsonrow['contest_id']}/{jsonrow['question_id'].split('_')[1]}"
+
+
+reasoning_models_styles = [
+    # LMStyle.OpenAIReason, LMStyle.OpenAIReasonPreview,
+    LMStyle.QwQ,
+    LMStyle.GeminiThinking,
+]
+
+
+def comment_reasoning(reasoning_text):
+    lines = reasoning_text.split("\n")
+    return "\n".join([f"# {line}" for line in lines])
 
 
 for idx, model in enumerate(LanguageModelList):
@@ -71,9 +83,17 @@ for idx, model in enumerate(LanguageModelList):
 
     all_outputs[model_name] = []
     for k in checked_samples:
+        if model.model_style in reasoning_models_styles:
+            code_list = [
+                k["code_list"][i]
+                + f"\n\n\n# Reasoning:\n\n{comment_reasoning(k['output_list'][i])}"
+                for i in range(len(k["code_list"]))
+            ]
+        else:
+            code_list = k["code_list"]
         all_outputs[model_name].append(
             {
-                "code_list": k["code_list"],
+                "code_list": code_list,
                 "pass1_list": k["graded_list"],
                 "metadata_list": k["metadata"] if "metadata" in k else [],
             }
