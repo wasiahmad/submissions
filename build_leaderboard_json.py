@@ -33,7 +33,7 @@ def load_performances_generation():
 
         with open(fname) as fp:
             model_outputs = json.load(fp)
-        if len(model_outputs) != 880:
+        if len(model_outputs) != 1055:
             continue
         assert (
             model.release_date is not None
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     date_marks = (
         [datetime(2023, m, 1) for m in range(5, 13)]
         + [datetime(2024, m, 1) for m in range(1, 13)]
-        + [datetime(2025, m, 1) for m in range(1, 3)]
+        + [datetime(2025, m, 1) for m in range(1, 6)]
     )
 
     date_marks = [int(d.timestamp() * 1000) for d in date_marks]
